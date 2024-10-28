@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo Neo4j con Tailwind</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 p-8">
+    <h1 class="text-2xl font-bold mb-6">Ejemplo de Usuarios con Neo4j</h1>
+    
+    <div class="mb-6">
+        <h2 class="text-xl font-semibold mb-2">Agregar Usuario</h2>
+        <input type="text" id="username" placeholder="Nombre del usuario" class="border rounded p-2 mr-2">
+        <button onclick="addUser()" class="bg-blue-500 text-white p-2 rounded">Agregar</button>
+    </div>
+
+    <div>
+        <h2 class="text-xl font-semibold mb-2">Lista de Usuarios</h2>
+        <ul id="userList" class="list-disc ml-6"></ul>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
