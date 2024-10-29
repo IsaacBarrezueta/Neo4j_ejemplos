@@ -3,23 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejemplo Neo4j con Tailwind</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Demo Neo4j - Red Social</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#10b981',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-100 text-gray-800 p-8">
-    <h1 class="text-2xl font-bold mb-6">Ejemplo de Usuarios con Neo4j</h1>
-    
-    <div class="mb-6">
-        <h2 class="text-xl font-semibold mb-2">Agregar Usuario</h2>
-        <input type="text" id="username" placeholder="Nombre del usuario" class="border rounded p-2 mr-2">
-        <button onclick="addUser()" class="bg-blue-500 text-white p-2 rounded">Agregar</button>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-xl font-bold">Neo4j Social - Dashboard de Operaciones</h1>
+                <div class="space-x-4">
+                    <a href="/index.html" class="text-blue-500 hover:text-blue-700">Inicio</a>
+                    <a href="/neo4j.html" class="text-blue-500 hover:text-blue-700">Neo4j</a>
+                    <a href="/dashboard.html" class="text-blue-500 hover:text-blue-700">Panel de Control</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-8 mb-12">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Demo Práctica de Neo4j</h1>
+            <p class="text-gray-600">Aprende cómo los datos fluyen desde el frontend hasta Neo4j</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <!-- Registro de Usuario -->
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">1. Registro de Usuario</h2>
+                
+                <div class="space-y-8">
+                    <div class="border-l-4 border-primary p-6 bg-gray-50 rounded-r-lg">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">Frontend</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="username">Usuario:</label>
+                                <input type="text" id="username" placeholder="Ej: juan123" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="email">Email:</label>
+                                <input type="email" id="email" placeholder="juan@ejemplo.com"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="password">Contraseña:</label>
+                                <input type="password" id="password"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            
+                            <button onclick="registerUser()" 
+                                class="w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-blue-600 transition-colors">
+                                Registrar Usuario
+                            </button>
+                        </div>
+
+                        <div class="mt-6 bg-gray-100 rounded-md p-4 font-mono text-sm">
+                            // Código que se ejecuta al dar click:
+                            fetch('/register', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    username,
+                                    email,
+                                    password
+                                })
+                            });
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-primary p-6 bg-gray-50 rounded-r-lg">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">Backend (Neo4j Query)</h3>
+                        <div class="bg-gray-100 rounded-md p-4 font-mono text-sm">
+                            CREATE (u:User {
+                                username: $username,
+                                email: $email,
+                                password: $hashedPassword,
+                                createdAt: datetime()
+                            })
+                        </div>
+                    </div>
+
+                    <div id="registerResult" class="hidden bg-green-50 text-green-700 p-4 rounded-md"></div>
+                </div>
+            </div>
+
+            <!-- Crear Post -->
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">2. Crear Post</h2>
+                
+                <div class="space-y-8">
+                    <div class="border-l-4 border-primary p-6 bg-gray-50 rounded-r-lg">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">Frontend</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="postUsername">Usuario:</label>
+                                <input type="text" id="postUsername" placeholder="Tu usuario"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="postContent">Contenido:</label>
+                                <input type="text" id="postContent" placeholder="¿Qué estás pensando?"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            
+                            <button onclick="createPost()" 
+                                class="w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-blue-600 transition-colors">
+                                Publicar
+                            </button>
+                        </div>
+
+                        <div class="mt-6 bg-gray-100 rounded-md p-4 font-mono text-sm">
+                            // Código que se ejecuta al dar click:
+                            fetch('/createPost', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    username,
+                                    content
+                                })
+                            });
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-primary p-6 bg-gray-50 rounded-r-lg">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">Backend (Neo4j Query)</h3>
+                        <div class="bg-gray-100 rounded-md p-4 font-mono text-sm">
+                            MATCH (u:User {username: $username})
+                            CREATE (p:Post {
+                                content: $content,
+                                createdAt: datetime()
+                            })
+                            CREATE (u)-[:POSTED]->(p)
+                        </div>
+                    </div>
+
+                    <div id="postResult" class="hidden bg-green-50 text-green-700 p-4 rounded-md"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualización de Datos -->
+        <div class="bg-white rounded-lg shadow-md p-8 mt-12">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">3. Visualización de Datos</h2>
+            
+            <div class="flex gap-4 mb-6">
+                <button onclick="showUsers()" class="tab active px-4 py-2 rounded-md bg-gray-200 hover:bg-primary hover:text-white transition-colors">
+                    Ver Usuarios
+                </button>
+                <button onclick="showPosts()" class="tab px-4 py-2 rounded-md bg-gray-200 hover:bg-primary hover:text-white transition-colors">
+                    Ver Posts
+                </button>
+                <button onclick="showStats()" class="tab px-4 py-2 rounded-md bg-gray-200 hover:bg-primary hover:text-white transition-colors">
+                    Estadísticas
+                </button>
+            </div>
+            
+            <div id="visualizer" class="min-h-[400px] border border-gray-200 rounded-lg p-6 bg-gray-50"></div>
+        </div>
     </div>
 
-    <div>
-        <h2 class="text-xl font-semibold mb-2">Lista de Usuarios</h2>
-        <ul id="userList" class="list-disc ml-6"></ul>
-    </div>
+    <script>
+        async function registerUser() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const createdAt = new Date().toISOString();
 
-    <script src="/app.js"></script>
+            if (!username || !email || !password) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, createdAt })
+                });
+
+                const result = await response.text();
+                const resultDiv = document.getElementById('registerResult');
+                resultDiv.classList.remove('hidden');
+                resultDiv.innerHTML = result;
+                
+                if (response.ok) {
+                    showUsers();
+                    document.getElementById('username').value = '';
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al registrar usuario');
+            }
+        }
+
+        async function createPost() {
+            const username = document.getElementById('postUsername').value;
+            const content = document.getElementById('postContent').value;
+
+            if (!username || !content) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            try {
+                const response = await fetch('/createPost', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, content })
+                });
+
+                const result = await response.text();
+                const resultDiv = document.getElementById('postResult');
+                resultDiv.classList.remove('hidden');
+                resultDiv.innerHTML = result;
+                
+                if (response.ok) {
+                    showPosts();
+                    document.getElementById('postUsername').value = '';
+                    document.getElementById('postContent').value = '';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al crear post');
+            }
+        }
+
+        async function showUsers() {
+            try {
+                const response = await fetch('/getAllUsers');
+                const users = await response.json();
+                
+                const visualizer = document.getElementById('visualizer');
+                visualizer.innerHTML = '<h3 class="text-xl font-semibold mb-4">Usuarios Registrados:</h3>';
+                
+                const userList = document.createElement('div');
+                userList.className = 'space-y-4';
+                users.forEach(user => {
+                    const userCard = document.createElement('div');
+                    userCard.className = 'p-4 bg-white rounded-lg shadow-sm';
+                    userCard.innerHTML = `
+                        <p class="font-medium text-gray-800">${user.username}</p>
+                        <p class="text-gray-600">${user.email}</p>
+                        <p class="text-gray-500 text-sm">Creado: ${new Date(user.createdAt).toLocaleString()}</p>
+                    `;
+                    userList.appendChild(userCard);
+                });
+                
+                visualizer.appendChild(userList);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function showPosts() {
+            try {
+                const response = await fetch('/getAllPosts');
+                const posts = await response.json();
+                
+                const visualizer = document.getElementById('visualizer');
+                visualizer.innerHTML = '<h3 class="text-xl font-semibold mb-4">Posts Publicados:</h3>';
+                
+                const postList = document.createElement('div');
+                postList.className = 'space-y-4';
+                posts.forEach(post => {
+                    const postCard = document.createElement('div');
+                    postCard.className = 'p-4 bg-white rounded-lg shadow-sm';
+                    postCard.innerHTML = `
+                        <p class="font-medium text-gray-800">${post.username}</p>
+                        <p class="text-gray-600">${post.content}</p>
+                        <p class="text-gray-500 text-sm">Creado: ${new Date(post.createdAt).toLocaleString()}</p>
+                    `;
+                    postList.appendChild(postCard);
+                });
+                
+                visualizer.appendChild(postList);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function showStats() {
+            try {
+                const response = await fetch('/getStats');
+                const stats = await response.json();
+                
+                const visualizer = document.getElementById('visualizer');
+                visualizer.innerHTML = `
+                    <h3 class="text-xl font-semibold mb-4">Estadísticas:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-white rounded-lg shadow-sm">
+                            <p class="text-gray-600">Total de usuarios</p>
+                            <p class="text-2xl font-bold text-primary">${stats.userCount}</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg shadow-sm">
+                            <p class="text-gray-600">Total de posts</p>
+                            <p class="text-2xl font-bold text-primary">${stats.postCount}</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg shadow-sm">
+                            <p class="text-gray-600">Total de relaciones</p>
+                            <p class="text-2xl font-bold text-primary">${stats.followCount}</p>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Manejo de tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('bg-primary', 'text-white');
+                    t.classList.add('bg-gray-200');
+                });
+                this.classList.remove('bg-gray-200');
+                this.classList.add('bg-primary', 'text-white');
+            });
+        });
+
+        // Cargar usuarios al iniciar
+        showUsers();
+    </script>
 </body>
 </html>

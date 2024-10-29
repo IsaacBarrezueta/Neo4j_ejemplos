@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Neo4j</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-xl font-bold">Neo4j Social - Dashboard de Operaciones</h1>
+                <div class="space-x-4">
+                    <a href="/index.html" class="text-blue-500 hover:text-blue-700">Inicio</a>
+                    <a href="/neo4j.html" class="text-blue-500 hover:text-blue-700">Neo4j</a>
+                    <a href="/dashboard.html" class="text-blue-500 hover:text-blue-700">Panel de Control</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-[#008CC2] text-white py-8 text-center">
+        <h1 class="text-3xl font-bold">🎯 Guía Completa de Neo4j</h1>
+        <p>Base de datos orientada a grafos</p>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Introducción -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">¿Qué es Neo4j? 🤔</h2>
+            <p class="mb-4">Neo4j es una base de datos orientada a grafos que almacena datos en forma de nodos y relaciones, en lugar de tablas. Es ideal para datos altamente conectados como:</p>
+            <ul class="list-disc pl-6 mb-4">
+                <li>Redes sociales</li>
+                <li>Sistemas de recomendación</li>
+                <li>Detección de fraude</li>
+                <li>Gestión de conocimiento</li>
+            </ul>
+        </div>
+
+        <!-- Conceptos Básicos -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">Conceptos Básicos 📚</h2>
+            
+            <div class="border-l-4 border-[#008CC2] bg-gray-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">🔵 Nodos (Nodes)</h3>
+                <p class="mb-2">Son las entidades principales en el grafo. Por ejemplo: Usuarios, Productos, Lugares.</p>
+                <div class="bg-gray-200 rounded-lg p-2">
+                    <code>CREATE (u:User {name: "Juan", age: 25})</code>
+                </div>
+            </div>
+
+            <div class="border-l-4 border-[#008CC2] bg-gray-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">➡️ Relaciones (Relationships)</h3>
+                <p class="mb-2">Conectan los nodos y tienen un tipo y dirección. Por ejemplo: FOLLOWS, LIKES, PURCHASED.</p>
+                <div class="bg-gray-200 rounded-lg p-2">
+                    <code>CREATE (u1:User)-[:FOLLOWS]->(u2:User)</code>
+                </div>
+            </div>
+
+            <div class="border-l-4 border-[#008CC2] bg-gray-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">🏷️ Etiquetas (Labels)</h3>
+                <p class="mb-2">Categorizan los nodos. Un nodo puede tener múltiples etiquetas.</p>
+                <div class="bg-gray-200 rounded-lg p-2">
+                    <code>CREATE (p:Person:Employee)</code>
+                </div>
+            </div>
+
+            <div class="border-l-4 border-[#008CC2] bg-gray-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">📝 Propiedades (Properties)</h3>
+                <p class="mb-2">Atributos de nodos y relaciones.</p>
+                <div class="bg-gray-200 rounded-lg p-2">
+                    <code>{name: "Juan", age: 25, joined: "2024-01-01"}</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplo Visual -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">Ejemplo Visual de Red Social 🎨</h2>
+            <div class="bg-white rounded-lg shadow-lg p-4">
+                <div class="mermaid">
+                    graph TD
+                    A[Usuario: Juan] -->|FOLLOWS| B[Usuario: Ana]
+                    B -->|POSTED| C[Post: "Hola Mundo"]
+                    D[Usuario: Carlos] -->|LIKES| C
+                    A -->|FOLLOWS| D
+                    style A fill:#b3e0ff
+                    style B fill:#b3e0ff
+                    style C fill:#ffd9b3
+                    style D fill:#b3e0ff
+                </div>
+            </div>
+        </div>
+
+        <!-- Cypher Query Language -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">Cypher Query Language 💻</h2>
+            <p class="mb-4">Cypher es el lenguaje de consulta de Neo4j. Aquí algunos ejemplos comunes:</p>
+
+            <div class="flex mb-4">
+                <button class="bg-[#008CC2] text-white rounded-lg px-4 py-2 mr-2 active">CREATE</button>
+                <button class="bg-gray-200 rounded-lg px-4 py-2 mr-2">MATCH</button>
+                <button class="bg-gray-200 rounded-lg px-4 py-2 mr-2">WHERE</button>
+                <button class="bg-gray-200 rounded-lg px-4 py-2 mr-2">DELETE</button>
+            </div>
+
+            <div class="bg-gray-200 rounded-lg p-4">
+                // Crear un usuario
+                CREATE (u:User {
+                    name: "Juan",
+                    age: 25
+                })
+
+                // Crear una relación
+                MATCH (a:User), (b:User)
+                WHERE a.name = "Juan" AND b.name = "Ana"
+                CREATE (a)-[:FOLLOWS]->(b)
+            </div>
+        </div>
+
+        <!-- Casos de Uso -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">Casos de Uso Comunes 🚀</h2>
+            
+            <div class="border-l-4 border-[#008CC2] bg-gray-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">👥 Red Social</h3>
+                <div class="bg-gray-200 rounded-lg p-2">
+                    // Encontrar amigos de amigos
+                    MATCH (u:User)-[:FOLLOWS]->(f:User)-[:FOLLOWS]->(fof:User)
+                    WHERE u.name = "Juan" AND NOT (u)-[:FOLLOWS]->(fof)
+                    RETURN DISTINCT fof.name
+                </div>
+            </div>
+
+            <div class="border-l-4 border-[#008CC2] bg-gray-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">📚 Sistema de Recomendaciones</h3>
+                <div class="bg-gray-200 rounded-lg p-2">
+                    // Recomendar productos basados en compras similares
+                    MATCH (u:User)-[:PURCHASED]->(p:Product)<-[:PURCHASED]-(other:User)-[:PURCHASED]->(rec:Product)
+                    WHERE u.name = "Juan" AND NOT (u)-[:PURCHASED]->(rec)
+                    RETURN rec.name, count(*) as frequency
+                    ORDER BY frequency DESC
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips y Mejores Prácticas -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">Tips y Mejores Prácticas 💡</h2>
+            
+            <div class="border-l-4 border-blue-500 bg-blue-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">Índices</h3>
+                <p class="mb-2">Crear índices en propiedades frecuentemente consultadas:</p>
+                <div class="bg-gray-200 rounded-lg p-2">
+                    <code>CREATE INDEX ON :User(username)</code>
+                </div>
+            </div>
+
+            <div class="border-l-4 border-blue-500 bg-blue-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">Modelado</h3>
+                <p class="mb-2">Diseña pensando en las consultas más frecuentes que necesitarás realizar.</p>
+            </div>
+
+            <div class="border-l-4 border-blue-500 bg-blue-100 rounded-lg p-4 mb-4">
+                <h3 class="text-xl font-bold mb-2">Rendimiento</h3>
+                <p class="mb-2">Usa EXPLAIN y PROFILE para analizar y optimizar tus consultas.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar Mermaid
+        mermaid.initialize({ startOnLoad: true });
+
+        // Función para manejar las pestañas
+        document.querySelectorAll('.flex button').forEach((button, index) => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.flex button').forEach((btn, i) => {
+                    btn.classList.remove('active');
+                    btn.classList.add('bg-gray-200');
+                });
+                button.classList.add('active');
+                button.classList.remove('bg-gray-200');
+                document.querySelectorAll('.bg-gray-200').forEach((content, i) => {
+                    content.style.display = 'none';
+                });
+                document.querySelectorAll('.bg-gray-200')[index].style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
